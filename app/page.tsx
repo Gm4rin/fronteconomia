@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { api } from '@/src/lib/api'
+import { api } from '@/lib/api'
 import { Trash2 } from 'lucide-react' // Opcional: npm install lucide-react
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
