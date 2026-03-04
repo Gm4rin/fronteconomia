@@ -6,16 +6,29 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     try {
-        const id = params.id;
+        const  id  = parseInt(params.id);
+
+        if (isNaN(id)) {
+            return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+        }
+
         await prisma.transaction.delete({
             where: {
-                // Se seu ID for auto-increment (1, 2, 3...), use Number(id)
-                // Se for String/UUID, use apenas id
-                id: Number(id), 
+                id: id,
             },
         });
-        return NextResponse.json({ message: 'Deletado!' }, { status: 200 });
-    } catch (error) {
-        return NextResponse.json({ error: 'Erro ao deletar' }, { status: 500 });
+
+        return NextResponse.json({ message: 'Transação removida!' }, { status: 200 });       
+    } catch (error: any) {
+        console.error("Erro no Prisma:", error);
+
+        if (error.code === 'P2025') {
+            return NextResponse.json({ error: 'Transação não encontrada'}, { status: 404 });
+        }
+
+        return NextResponse.json(
+            { error: 'Erro ao deletar transação' },
+            { status: 500 }
+        );
     }
 }
