@@ -3,37 +3,38 @@ import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
     request: Request,
-    // No Next.js 16, params é uma Promise
     { params }: { params: Promise<{ id: string }> } 
 ) {
     try {
-        // 1. Você PRECISA dar await no params primeiro
         const resolvedParams = await params;
+        
+        // LOG PARA DIAGNÓSTICO: Verifique isso nos logs da Vercel!
+        console.log("CONTEÚDO DO PARAMS:", resolvedParams);
+
         const idRaw = resolvedParams.id;
         
-        // 2. Agora sim, converte o texto para número
+        // Se idRaw for undefined, o Next.js não encontrou a pasta [id]
+        if (!idRaw) {
+             return NextResponse.json({ 
+                 error: "ID não encontrado nos parâmetros", 
+                 debug: resolvedParams 
+             }, { status: 400 });
+        }
+
         const id = parseInt(idRaw);
 
         if (isNaN(id)) {
-            console.error("O ID chegou como:", idRaw);
-            return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+            return NextResponse.json({ error: "ID inválido", recebido: idRaw }, { status: 400 });
         }
 
-        // 3. Deleta no banco usando o ID numérico
         await prisma.transaction.delete({
             where: { id: id },
         });
 
-        return NextResponse.json({ message: "Transação removida!" }, { status: 200 });
+        return NextResponse.json({ message: "Deletado!" }, { status: 200 });
 
     } catch (error: any) {
-        console.error("Erro ao deletar:", error);
-        
-        // P2025 é o erro de "registro não encontrado" do Prisma
-        if (error.code === 'P2025') {
-            return NextResponse.json({ error: "Transação não encontrada" }, { status: 404 });
-        }
-
+        console.error("Erro no servidor:", error);
         return NextResponse.json({ error: "Erro interno" }, { status: 500 });
     }
 }
