@@ -7,19 +7,15 @@ export async function DELETE(
 ) {
     try {
         const id = params.id;
-
         await prisma.transaction.delete({
             where: {
-                id: Number(id),
+                // Se seu ID for auto-increment (1, 2, 3...), use Number(id)
+                // Se for String/UUID, use apenas id
+                id: Number(id), 
             },
         });
-
-        return NextResponse.json({ message: 'Transação removida!' }, { status: 200 });
+        return NextResponse.json({ message: 'Deletado!' }, { status: 200 });
     } catch (error) {
-        console.error("Erro no Delete:", error);
-        return NextResponse.json(
-            { error: 'Erro ao deletar transação' },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Erro ao deletar' }, { status: 500 });
     }
 }
