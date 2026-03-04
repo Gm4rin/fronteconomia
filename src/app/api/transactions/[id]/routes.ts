@@ -13,8 +13,10 @@ export async function DELETE(
                 id: Number(id),
             },
         });
-        return NextResponse.json({ message: 'Transação deletada com sucesso' });
+
+        return NextResponse.json({ message: 'Transação removida!' }, { status: 200 });
     } catch (error) {
+        console.error("Erro no Delete:", error);
         return NextResponse.json(
             { error: 'Erro ao deletar transação' },
             { status: 500 }
