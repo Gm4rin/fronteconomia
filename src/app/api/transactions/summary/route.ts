@@ -17,9 +17,17 @@ export async function GET(request: Request) {
 
     const summary = transactions.reduce((acc, t) => {
         const amount = Number(t.amount);
-        if (amount > 0) acc.incomes - acc.expenses;
-        return acc;
-    }, { incomes: 0, expenses: 0, total: 0 });
 
-    return NextResponse.json(summary);
+        if (amount > 0) {
+           acc.incomes += amount;
+    } else  { 
+        acc.expenses += Math.abs(amount);
+    }
+
+    acc.total = acc.incomes - acc.expenses;
+
+    return acc;
+}, { incomes: 0, expenses: 0, total: 0 } as { incomes: number; expenses: number; total: number });
+
+return NextResponse.json(summary);
 }
