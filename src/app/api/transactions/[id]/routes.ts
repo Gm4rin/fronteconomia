@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
@@ -7,11 +7,17 @@ export async function DELETE(
 ) {
     try {
         const id = params.id;
+
         await prisma.transaction.delete({
-            where: { id: Number(id) }
+            where: {
+                id: Number(id),
+            },
         });
-        return new NextResponse(null, { status: 204 });
+        return NextResponse.json({ message: 'Transação deletada com sucesso' });
     } catch (error) {
-        return NextResponse.json({ error: "Erro ao deletar" }, { status: 400 });
+        return NextResponse.json(
+            { error: 'Erro ao deletar transação' },
+            { status: 500 }
+        );
     }
 }

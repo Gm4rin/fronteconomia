@@ -36,6 +36,7 @@ export async function POST(request: Request) {
         });
         return NextResponse.json(transaction, { status: 201 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Erro ao criar transação' }, { status: 500 });
     }
 }
